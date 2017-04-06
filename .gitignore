@@ -1,0 +1,7 @@
+*.idea
+*.svn
+*.DS_Store
+
+
+Temp/
+obj/
