@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 3a93b189a775a0d47ba75968fb7d4ebd
+timeCreated: 1491201425
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Chalkboard SE
+  fontNames:
+  - Chalkboard SE
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
