@@ -1,56 +1,97 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
-    public GameObject baseDeck; 
-	public Card[] cardsArray = new Card[52];
-	public Deck[] bottomDeckArray = new Deck[7];
-	public Deck[] aceDeckArray = new Deck[4];
-	public Deck   wasteDeck;
-	public Deck   packDeck; 
+	public CardLogic cardLogic;
+	public GameObject modalLayer;
+	public GameObject winLayer;
+	public GameObject settingLayer;
+	public GameObject ruleLayer;
+	public Text timeLabel;
+	public Text scoreLabel;
+	public Text stepsLabel;
 
-	public EventManager evtMgr;    //
+
+	private int timeCount;    //计时器秒数
+	private int stepCount;    //步数
+	private int scoreCount;   //分数
 	// Use this for initialization
 	void Start () { 
-        //初始化牌组
-        this.InitCardNodes();
-
-        //cards
-        int baseIndex = baseDeck.transform.GetSiblingIndex(); 
-        int k = 0;
-        for (int i = 0; i < 7; i++)
-        {
-            for (int j = 0; j < i + 1; j++)
-            {
-                this.bottomDeckArray[i].PushCard(this.cardsArray[k]);  
-                k++;
-            }
-            this.bottomDeckArray[i].UpdateCardsPosition(true);
-        }
+		
 	}
 
-	void Awake(){
-		evtMgr = new EventManager ();
+	void Awake(){	
+		timeCount = 0;
+		stepCount = 0;
+		scoreLabel.text = "1000";
+		SetTimeLabel (65);
+	}
+	//根据秒数显示时间
+	void SetTimeLabel(int seconds){
+		int sec = seconds % 60;
+		int min = (seconds % 3600) / 60;
+		timeLabel.text = string.Format ("{0,2}:{1,2}", min.ToString().PadLeft(2, '0'), sec.ToString().PadLeft(2, '0'));
 	}
 
-    void InitCardNodes()
-    {
-        for (int i = 0; i < 52; i++)
-        {
-            GameObject objPrefab = (GameObject)Resources.Load("Prefabs/card");
-            objPrefab = Instantiate(objPrefab);
-			objPrefab.transform.SetParent(wasteDeck.transform.parent); 
-            this.cardsArray[i] = objPrefab.GetComponent<Card>();
-			this.cardsArray [i].InitWithNumber (i);
-			this.cardsArray [i].gameMgr = this;
-
-        }
-    }
-	
 	// Update is called once per frame
 	void Update () {
 
 	}
+
+	public void HasWinGame(){
+		winLayer.SetActive (true);
+	}
+
+	public void OnClickModalRandom(){
+	}
+
+	public void OnClickModalReplay(){
+	}
+
+	public void OnClickModalClose(){
+		modalLayer.SetActive (false); 
+	}
+
+	public void OnClickWinNewGame(){
+	}
+
+	public void OnClickSettingBtn(){
+		settingLayer.SetActive (true);
+	}
+
+	public void OnClickPlayBtn(){
+		modalLayer.SetActive (true);
+	}
+
+	public void OnClickRecommendBtn(){
+	}
+
+	public void OnClickUndoBtn(){
+		
+	}
+
+	public void OnClickSettingBackBtn(){ 
+		settingLayer.SetActive (false); 
+	}
+
+	public void OnClickSettingLayerRuleBtn(){ 
+		ruleLayer.SetActive (true);
+	}
+
+	public void OnClickRuleBackBtn(){
+		ruleLayer.SetActive (false);
+	}
+
+	public void CardMove(){
+		stepCount++;
+		stepsLabel.text = stepCount.ToString ();
+	}
+	//清空状态
+	public void RestoreInitialState(){ 
+		
+	}
+
 
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler,  IPointerClickHandler
 {
     //
     private bool isMouseDown = false;
@@ -26,8 +26,8 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     public bool draggable = false;  //
 
     private RectTransform parentRectTransform; 
-    private Deck _deck;
-	public GameManager gameMgr;
+    private Deck _deck; 
+	public CardLogic cardLogic;
     public Deck deck
     {
         get
@@ -38,8 +38,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         {
             _deck = value;
         }
-    }
-    public GameManager spiderGameMgr;
+    } 
 
 	// Use this for initialization
 	void Start () {
@@ -158,10 +157,11 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 		}
         transform.SetSiblingIndex(zIndex); 
         isMouseDown = false;
-        this.transform.position = oldPosition;
+        //this.transform.position = oldPosition;
         lastMousePosition = Vector3.zero;
-        //
-        this._deck.UpdateCardsPosition(false);
+		//
+		this.cardLogic.OnDragEnd (this);
+        this._deck.UpdateCardsPosition(false); 
     }
 
 
@@ -191,7 +191,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
             }
             texture += this.number;
         }
-		Debug.Log ("texture is " + texture);
+		//Debug.Log ("texture is " + texture);
         return texture;
     }
 
@@ -199,7 +199,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     public void RestoreBackView()
     {
         this.status = 0;
-
+		SetBackgroundImg ("back");
     }
 
     public void SetPosition(Vector3 position)
@@ -225,4 +225,9 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 		SetBackgroundImg (GetTexture());
 	}
 
+	public void OnPointerClick(PointerEventData eventData){
+		if (deck.deckType == Public.DECK_TYPE_PACK) {
+			deck.OnPointerClick (eventData);
+		}
+	}
 }
