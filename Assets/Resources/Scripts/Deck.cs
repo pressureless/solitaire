@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
+using UnityEngine.UI;
 public class Deck : MonoBehaviour,  IPointerClickHandler{ 
 	public CardLogic cardLogic;
     public int deckNum = 0;
@@ -33,6 +33,12 @@ public class Deck : MonoBehaviour,  IPointerClickHandler{
 	void Update () {
 		
 	}
+    public void SetBackgroundImg(string str)
+    {
+        Image image = this.GetComponent<Image>();
+        Sprite tempType = Resources.Load("Sprites/decks/" + str, typeof(Sprite)) as Sprite;
+        image.overrideSprite = tempType;
+    }
 
     public void PushCard(Card card)
     {

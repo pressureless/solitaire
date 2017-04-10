@@ -16,25 +16,8 @@ public class CardLogic : MonoBehaviour {
 		InitCardNodes();
 		//
 		InitAllDeckArray();
-		//cards 
-		int k = 0;
-		for (int i = 0; i < 7; i++)
-		{
-			for (int j = 0; j < i + 1; j++)
-			{
-				bottomDeckArray[i].PushCard(cardsArray[k]);  
-				k++;
-			}
-			bottomDeckArray[i].UpdateCardsPosition(true);
-		}
-		for (int i = k; i < 51; i++) {
-			packDeck.PushCard (cardsArray[i]);
-		}
-		packDeck.UpdateCardsPosition (true);
-		//
-		wasteDeck.PushCard(cardsArray[51]);
-		wasteDeck.UpdateCardsPosition (true);
 		// 
+		Shuffle(false);
 	}
 
 	void Awake(){ 
@@ -72,6 +55,19 @@ public class CardLogic : MonoBehaviour {
 		}
 	}
 
+	void InitDeckCards(){ 
+		for (int i = 0; i < 7; i++)
+		{
+			for (int j = 0; j < i + 1; j++)
+			{
+				bottomDeckArray[i].PushCard(packDeck.Pop());   
+			}
+			bottomDeckArray[i].UpdateCardsPosition(true);
+		} 
+		packDeck.UpdateCardsPosition (true); 
+		wasteDeck.UpdateCardsPosition (true); 
+	}
+
 	void InitAllDeckArray(){
 		int j = 0;
 		for (int i = 0; i < 4; i++) {
@@ -103,11 +99,18 @@ public class CardLogic : MonoBehaviour {
 						targetDeck.UpdateCardsPosition (false);
 						srcDeck.UpdateCardsPosition (false);
 						ActionAfterEachStep ();
-						break;
+                        if (targetDeck.deckType == Public.DECK_TYPE_ACE)
+                        {
+                            gameMgr.AddScoreValue(Public.SCORE_MOVE_TO_ACE);
+                            gameMgr.PlayGameAudio(Public.AUDIO_TYPE_CYCLE);
+                        }
+						return;
 					}
 				}
 			}
-		}
+        }
+        //gameMgr.PlayGameAudio(Public.AUDIO_TYPE_WIN);
+        gameMgr.PlayGameAudio(Public.AUDIO_TYPE_CANCEL);
 	}
 
 	//点击牌堆
@@ -116,13 +119,14 @@ public class CardLogic : MonoBehaviour {
 			wasteDeck.PushCard (packDeck.Pop ());
 			packDeck.UpdateCardsPosition (false);
 			wasteDeck.UpdateCardsPosition (false);
-			ActionAfterEachStep ();
+            ActionAfterEachStep();
 		} else {//需要重新回收牌
 			if (wasteDeck.GetCardNums() > 0) {
 				MoveWasteToPack();
 				ActionAfterEachStep ();
 			}
-		}
+        }
+        gameMgr.PlayGameAudio(Public.AUDIO_TYPE_ROTATE);
 	}
 	//转移牌
 	public void MoveWasteToPack(){
@@ -148,14 +152,25 @@ public class CardLogic : MonoBehaviour {
 	}
 	//每步之后的操作
 	public void ActionAfterEachStep(){
-		CheckWinGame ();   
-		gameMgr.CardMove ();
+        SetPackDeckBg();
+        gameMgr.CardMove();
+        CheckWinGame();   
 	}
 	//洗牌
 	public void Shuffle(bool bReplay){
+        gameMgr.RestoreInitialState();
+        RestoreInitialState();
 		if (!bReplay) {
 			GenerateRandomCardNums ();
 		}
+		for (int i = 0; i < Public.CARD_NUMS; i++) {
+			Card card = cardsArray[i];
+			card.InitWithNumber (cardNumberArray[i]);
+			card.InitWithNumber (i);
+            packDeck.PushCard(card);
+		}
+		InitDeckCards ();   //把牌放到不同的deck上
+        SetPackDeckBg();
 	}
 	//清空状态
 	public void RestoreInitialState(){
@@ -163,4 +178,16 @@ public class CardLogic : MonoBehaviour {
 			allDeckArray [i].RestoreInitialState ();
 		}
 	}
+
+    //根据牌的数目显示不同的背景
+    void SetPackDeckBg()
+    {
+        string name = "pack_deck_none";
+        if (packDeck.GetCardNums() > 0 || wasteDeck.GetCardNums() > 0)
+        {
+            name = "pack_deck_rotate";
+        }
+        packDeck.SetBackgroundImg(name);
+    }
+    
 }

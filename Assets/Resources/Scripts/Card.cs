@@ -223,7 +223,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
 	public void UpdateCardImg(bool rotate){
 		SetBackgroundImg (GetTexture());
-	}
+	} 
 
 	public void OnPointerClick(PointerEventData eventData){
 		if (deck.deckType == Public.DECK_TYPE_PACK) {
